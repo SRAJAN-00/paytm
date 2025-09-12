@@ -23,12 +23,12 @@ router.post("/signup", async (req, res) => {
   console.log("Request body:", req.body);
   const result = signUpBodySchema.safeParse(req.body);
   console.log("Validation result:", result);
-  
+
   if (!result.success) {
     console.log("Validation errors:", result.error.errors);
-    return res.status(400).json({ 
+    return res.status(400).json({
       message: "Invalid request body",
-      errors: result.error.errors 
+      errors: result.error.errors,
     });
   }
 
@@ -105,9 +105,9 @@ router.get("/", authMiddleware, async (req, res) => {
   });
 });
 
-router.get('/me', authMiddleware, async (req, res) => {
+router.get("/me", authMiddleware, async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select('-password');
+    const user = await User.findById(req.userId).select("-password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -117,25 +117,25 @@ router.get('/me', authMiddleware, async (req, res) => {
         username: user.username,
         firstName: user.firstName,
         lastName: user.lastName,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 });
 
-router.get('/all', async (req, res) => {
+router.get("/all", async (req, res) => {
   try {
-    const users = await User.find({}).select('-password');
+    const users = await User.find({}).select("-password");
     res.status(200).json({
       users: users.map((user) => ({
         id: user._id,
         username: user.username,
         firstName: user.firstName,
         lastName: user.lastName,
-        email: user.email
-      }))
+        email: user.email,
+      })),
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });

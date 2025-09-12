@@ -4,11 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "echo \"No build process needed for Node.js\"",
-    "lint": "echo \"Add ESLint for linting\"",
-    "clean": "rm -rf node_modules package-lock.json && npm install"
+    "dev": "start"
   },
   "keywords": [],
   "author": "",
