@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { AuthLayout } from "../components/AuthLayout";
 import { InputField } from "../components/InputField";
 import { Button } from "../components/Button";
@@ -53,6 +53,7 @@ export const Signin = () => {
     username: "",
     password: "",
   });
+  const navigate = useNavigate();
   const [errors, setErrors] = useState<Partial<FormErrors>>({});
   const [loading, setLoading] = useState(false);
 
@@ -96,6 +97,19 @@ export const Signin = () => {
         username: formData.username,
         password: formData.password,
       });
+      const token = response.data.token;
+      if (token) {
+        localStorage.setItem("token", token);
+
+        if (response.data.user) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+        }
+        navigate("/dashboard");
+      } else {
+        console.error("failed to save token");
+        setErrors({ username: "invalid" });
+      }
+
       console.log("sign in successful", response);
     } catch (error) {
       console.log("sign in failed", error);
