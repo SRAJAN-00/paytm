@@ -7,7 +7,7 @@ export const BalanceCard = ({ balance }: BalanceCardProps) => {
     <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-2xl p-6 shadow-md">
       <div>
         <div className="text-lg font-semibold text-blue-700">Your Balance</div>
-        <div className="text-3xl font-bold text-blue-900 mt-2">₹ {balance}</div>
+        <div className="text-3xl font-bold text-blue-900 mt-2">₹ {Number(balance).toFixed(2)}</div>
       </div>
       <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full">
         <svg

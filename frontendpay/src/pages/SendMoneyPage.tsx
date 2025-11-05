@@ -2,8 +2,8 @@ import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 import { BACKEND_URL } from "../config";
 import { useState } from "react";
-import Toast from "../components/Toast";
 import { useBalance } from "../hooks/useBalance";
+import Toast from "../components/Toast";
 
 export const SendMoneyPage = () => {
   const [searchParams] = useSearchParams();

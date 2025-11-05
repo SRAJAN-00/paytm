@@ -5,11 +5,6 @@ const { Account } = require("../db");
 
 const router = express.Router();
 
-// TODO: Add account routes here
-
-// router.get("/balance", ...)
-// router.post("/transfer", ...)
-
 router.get("/balance", authMiddleware, async (req, res) => {
   const userId = req.userId;
   const account = await Account.findOne({ userId });
@@ -19,7 +14,6 @@ router.get("/balance", authMiddleware, async (req, res) => {
   res.status(200).json({ balance: account.balance });
 });
 
-// Transfer function for testing
 router.post("/transfer", authMiddleware, async (req, res) => {
   const transactions = await mongoose.startSession();
   transactions.startTransaction();
@@ -29,6 +23,25 @@ router.post("/transfer", authMiddleware, async (req, res) => {
     await transactions.abortTransaction();
     transactions.endSession();
     return res.status(400).json({ message: "Invalid request body" });
+  }
+
+  // Check sender's account and balance
+  const fromAccount = await Account.findOne({ userId: req.userId }).session(
+    transactions
+  );
+  if (!fromAccount) {
+    await transactions.abortTransaction();
+    transactions.endSession();
+    return res.status(404).json({ message: "Sender account not found" });
+  }
+
+  // Check if sender has enough balance (minimum 100 after transaction)
+  if (fromAccount.balance - amount < 100) {
+    await transactions.abortTransaction();
+    transactions.endSession();
+    return res.status(400).json({
+      message: "Insufficient balance. You must maintain a minimum balance of ₹100",
+    });
   }
 
   const toAccount = await Account.findOne({ userId: toUserId }).session(
@@ -54,7 +67,5 @@ router.post("/transfer", authMiddleware, async (req, res) => {
   transactions.endSession();
   res.status(200).json({ message: "Transfer successful" });
 });
-
-// Test calls
 
 module.exports = router;
