@@ -63,6 +63,7 @@ interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
+  pin: string;
 }
 
 interface FormErrors {
@@ -72,6 +73,7 @@ interface FormErrors {
   email?: string;
   password?: string;
   confirmPassword?: string;
+  pin?: string;
 }
 
 export const Signup = () => {
@@ -82,6 +84,7 @@ export const Signup = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    pin: "",
   });
   const navigate = useNavigate();
   const [errors, setErrors] = useState<FormErrors>({});
@@ -138,6 +141,12 @@ export const Signup = () => {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
+    if (!formData.pin) {
+      newErrors.pin = "PIN is required";
+    } else if (formData.pin.length !== 4) {
+      newErrors.pin = "PIN must be exactly 4 digits";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -158,6 +167,7 @@ export const Signup = () => {
         password: formData.password,
         firstName: formData.firstName,
         lastName: formData.lastName,
+        pin: formData.pin, // Include PIN in the request
       });
       const token = response.data.token;
       if (token) {
@@ -254,6 +264,30 @@ export const Signup = () => {
           error={errors.confirmPassword}
           icon={<LockIcon />}
         />
+
+        {/* PIN */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Create 4-Digit PIN
+          </label>
+          <input
+            type="password"
+            maxLength={4}
+            value={formData.pin}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, ""); // Only digits
+              if (value.length <= 4) {
+                setFormData({ ...formData, pin: value });
+              }
+            }}
+            className="w-full border rounded-full px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            placeholder="Enter 4-digit PIN"
+            required
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            This PIN will be used for transaction verification
+          </p>
+        </div>
 
         {/* Submit Button */}
         <div className="pt-4">

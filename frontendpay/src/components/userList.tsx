@@ -54,9 +54,12 @@ export const UserList = () => {
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
+     
     };
+  
     fetchUsers();
   }, [filter]);
+  
 
   return (
     <div>

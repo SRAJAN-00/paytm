@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const { string, minLength } = require("zod");
 
 // Load environment variables
 dotenv.config();
@@ -59,6 +60,17 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    pin: {
+      type: String,
+      required: true,
+      length: 4,  // Change from minLength to exactly 4
+      validate: {
+        validator: function(v) {
+          return /^\d{4}$/.test(v);  // Exactly 4 digits
+        },
+        message: 'PIN must be exactly 4 digits'
+      }
+    }
   },
   {
     timestamps: true,

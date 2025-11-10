@@ -12,6 +12,7 @@ const signUpBodySchema = z.object({
   password: z.string().min(6),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
+   pin: z.string().length(4).regex(/^\d{4}$/)
 });
 
 const signInBodySchema = z.object({
@@ -60,6 +61,9 @@ router.post("/signin", async (req, res) => {
   // Simple password comparison (you should hash passwords in production)
   if (user.password !== req.body.password) {
     return res.status(400).json({ message: "Invalid username or password" });
+  }
+  if (user.pin !== req.body.pin) {
+    return res.status(400).json({ message: "Invalid PIN" });
   }
   const userId = user._id;
   const token = jwt.sign({ userId }, JWT_SECRET);
@@ -139,6 +143,21 @@ router.get("/all", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+// DELETE ALL USERS - FOR DEVELOPMENT ONLY
+router.delete("/clear-all", async (req, res) => {
+  try {
+    const userResult = await User.deleteMany({});
+    const accountResult = await Account.deleteMany({});
+    res.json({ 
+      message: `Deleted ${userResult.deletedCount} users and ${accountResult.deletedCount} accounts`,
+      usersDeleted: userResult.deletedCount,
+      accountsDeleted: accountResult.deletedCount
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
